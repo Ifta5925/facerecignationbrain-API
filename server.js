@@ -11,10 +11,8 @@ const image = require("./controllers/image");
 const db = knex({
   client: "pg",
   connection: {
-    host: "postgresql-curved-39113",
-    user: "postgres",
-    password: "123456",
-    database: "smart-brain",
+    host: process.env.DATABASE_URL,
+    ssl: true,
   },
 });
 
@@ -26,12 +24,20 @@ app.get("/", (req, res) => {
   res.send("It is working");
 });
 //SIGNIN  // Load hash from your password DB.
-app.post("/signin",  signin.handleSignin(db, bcrypt));
+app.post("/signin", signin.handleSignin(db, bcrypt));
 //REGISTER
-app.post("/register", (req, res) => {register.handleRegister(req, res, db, bcrypt)});
-app.get("/profile/:id",(req, res)=> {profile.handleProfileGet(req, res, db)});
-app.put("/image", (req,res)=> {image.handleImage(req,res,db) });
-app.post("/imageurl", (req,res)=> {image.handleApiCall(req,res) });
+app.post("/register", (req, res) => {
+  register.handleRegister(req, res, db, bcrypt);
+});
+app.get("/profile/:id", (req, res) => {
+  profile.handleProfileGet(req, res, db);
+});
+app.put("/image", (req, res) => {
+  image.handleImage(req, res, db);
+});
+app.post("/imageurl", (req, res) => {
+  image.handleApiCall(req, res);
+});
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("app is running ${process.env.PORT}");
